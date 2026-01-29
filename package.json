@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Project containing your PowerApps Component Framework (PCF) control.",
   "scripts": {
-    "build": "pcf-scripts build",
+    "build": "node --openssl-legacy-provider node_modules/pcf-scripts/bin/pcf-scripts.js build",
     "clean": "pcf-scripts clean",
     "rebuild": "pcf-scripts rebuild",
     "start": "pcf-scripts start"

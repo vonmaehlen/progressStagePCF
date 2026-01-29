@@ -1,23 +1,17 @@
 :root {
-  --line-border-fill: #DB3923;
-  --line-border-empty: #DFDFDF;
-  --line-border-fill-active: #DB3923;
+  --progress-line-fill: rgb(15, 108, 189);
+  --progress-line-empty: #f0f0f0;
+  --progress-line-fill-active: rgb(15, 108, 189);
 }
 
-._1Lxpd {
-  /* text-align: center;  */
-   width: auto;
-   display: flex;
-   /* flex-direction: row;
-   flex-wrap: nowrap;
-   justify-content: normal;
-   align-items: normal;
-   align-content: normal */
-
+/* Wrapper für die gesamte Progress-Steps-Komponente */
+.progress-steps {
+  width: auto;
+  display: flex;
 }
 
-
-._1vzPx {
+/* Track (Hintergrundlinie + Schritte) */
+.progress-steps__track {
   display: flex;
   justify-content: space-between;
   position: relative;
@@ -26,20 +20,20 @@
   width: 100%;
 }
 
-._1vzPx::before {
+.progress-steps__track::before {
   content: '';
-  background-color: var(--line-border-empty);
+  background-color: var(--progress-line-empty);
   position: absolute;
   top: 50%;
   left: 0;
   transform: translateY(-50%);
   height: 6px;
   width: 100%;
-  /* z-index: 0; */
 }
 
-._2EqlW {
-  background-color: var(--line-border-fill);
+/* Fortschritts-Füllung (animierte Linie) */
+.progress-steps__fill {
+  background-color: var(--progress-line-fill);
   position: absolute;
   top: 50%;
   left: 0;
@@ -50,7 +44,8 @@
   transition: 0.4s ease;
 }
 
-._3PfrK {
+/* Einzelner Schritt (Kreis) */
+.progress-steps__step {
   background-color: #fff;
   color: #999;
   border-radius: 50%;
@@ -59,61 +54,57 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 6px solid var(--line-border-empty);
+  border: 6px solid var(--progress-line-empty);
   cursor: pointer;
   transition: 0.4s ease;
 }
 
-._3PfrK._3sodH {
-  border-color: var(--line-border-fill);
+.progress-steps__step--active {
+  border-color: var(--progress-line-fill);
 }
 
-._3PfrK._35Ago {
-  border-color: var(--line-border-fill-active);
+.progress-steps__step--current {
+  border-color: var(--progress-line-fill-active);
 }
 
-._1Pz2d {
-  background-color: var(--line-border-fill);
+/* Label unter dem Schritt */
+.progress-steps__label {
+  display: grid;
+  grid-gap: 10px;
+  grid-auto-rows: minmax(10px, auto);
+  padding: 5px;
+  margin-top: 25px;
+  font-size: 10px;
+  position: absolute;
+  top: 0;
+  left: unset;
+  text-align: center;
+  color: black;
+  width: 150px;
+}
+
+/* Vor/Zurück-Buttons (aktuell ausgeblendet) */
+.progress-steps__btn {
+  background-color: var(--progress-line-fill);
   color: #fff;
   border: 0;
   border-radius: 6px;
   cursor: pointer;
   font-family: inherit;
   padding: 8px 30px;
-  /* margin: 12px 200px 0px 200px; */
   font-size: 14px;
-  /* added by Moly */
-display:none
+  display: none;
 }
 
-._1Pz2d:active {
+.progress-steps__btn:active {
   transform: scale(0.98);
 }
 
-._1Pz2d:focus {
+.progress-steps__btn:focus {
   outline: 0;
 }
 
-._1Pz2d:disabled {
-  background-color: var(--line-border-empty);
+.progress-steps__btn:disabled {
+  background-color: var(--progress-line-empty);
   cursor: not-allowed;
-}
-
-
-._TTlp {
-  display: grid;
-   /* grid-template-columns: auto auto auto auto;  */
-  grid-gap: 10px;
-  grid-auto-rows: minmax(10px, auto);
-  padding: 5px;
-  /* box-sizing: border-box; */
-  margin-Top: 25px;
-  background-color: #e6e6e6 !important;
-  font-Size:10px;
-  position:absolute;
-  top:0; 
-  left:unset;
-  text-align: center;
-  color: black;
-  width: 150px;
 }

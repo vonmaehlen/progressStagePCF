@@ -1,145 +1,91 @@
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Component } from 'react';
-import ProgressBarWithStages from './component/progressComponent.jsx'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import ProgressBarWithStages from "./component/progressComponent";
+import type { ProgressStepOption } from "./src/ReactMinimalProgressSteps";
 
-
-
-
-const DEFAULT_OPTIONS: ComponentFramework.PropertyHelper.OptionMetadata[] = [{
-	Value: 10,
-	Label: "10% 1",
-	Color: "#6B8E23",
-},
-{
-	Value: 30,
-	Label: "30% 3 Herer goes a large text that have to be",
-	Color: "#9ACD32"
-},
-{
-	Value: 50,
-	Label: "50% 5 here other large text to be visible",
-	Color: "#556B2F"
-},
-{
-	Value: 70,
-	Label: "70% 7",
-	Color: "#ADFF2F"
-},
-{
-	Value: 90,
-	Label: "90% 9",
-	Color: "#8FBC8F"
-},
-{
-	Value: 100,
-	Label: "100% 100",
-	Color: "#006400"
-}
-
+const DEFAULT_OPTIONS: ComponentFramework.PropertyHelper.OptionMetadata[] = [
+  { Value: 10, Label: "10% 1", Color: "#6B8E23" },
+  { Value: 30, Label: "30% 3", Color: "#9ACD32" },
+  { Value: 50, Label: "50% 5", Color: "#556B2F" },
+  { Value: 70, Label: "70% 7", Color: "#ADFF2F" },
+  { Value: 90, Label: "90% 9", Color: "#8FBC8F" },
+  { Value: 100, Label: "100% 100", Color: "#006400" },
 ];
 
-
 export class ProgressBarPCF implements ComponentFramework.StandardControl<IInputs, IOutputs> {
+  private dropdownOptions: ProgressStepOption[] = [];
+  private selectedOptionValue: number | null = null;
+  private container: HTMLDivElement;
+  private notifyOutputChanged: () => void;
 
-	private allOptions: ComponentFramework.PropertyHelper.OptionMetadata[];
-	private defaultValue: number | undefined;
-	private isDisabled: boolean;
-	private dropdownOptions: any;
-	private container: HTMLDivElement;
-	private currentValue: number | null;
-	private notifyOutputChanged: () => void;
-	/**
-	 * Empty constructor.
-	 */
-	constructor() {
+  constructor() {
+    // PCF StandardControl
+  }
 
-	}
+  public init(
+    context: ComponentFramework.Context<IInputs>,
+    notifyOutputChanged: () => void,
+    _state: ComponentFramework.Dictionary,
+    container: HTMLDivElement
+  ): void {
+    let opts = context.parameters.OptionSetField.attributes?.Options ?? [];
+    if (opts.length === 3) {
+      opts = DEFAULT_OPTIONS;
+    }
 
-	/**
-	 * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
-	 * Data-set values are not initialized here, use updateView.
-	 * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to property names defined in the manifest, as well as utility functions.
-	 * @param notifyOutputChanged A callback method to alert the framework that the control has new outputs ready to be retrieved asynchronously.
-	 * @param state A piece of data that persists in one session for a single user. Can be set at any point in a controls life cycle by calling 'setControlState' in the Mode interface.
-	 * @param container If a control is marked control-type='standard', it will receive an empty div element within which it can render its content.
-	 */
-	public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container: HTMLDivElement) {
+    const allOptions: ComponentFramework.PropertyHelper.OptionMetadata[] = [
+      { Label: "--Select--", Value: -1, Color: "#FFFFFF" },
+      ...opts,
+    ];
 
-		let opts = context.parameters.OptionSetField.attributes!.Options;
-		//todo
-		if (opts?.length === 3) {
-			let i = 0;
-			opts = DEFAULT_OPTIONS
-		}
-		this.allOptions = [
-			{ Label: "--Select--", Value: -1, Color: "#FFFFFF" },
-			...opts];
+    this.dropdownOptions = allOptions.map((option, index) => ({
+      Value: option.Value,
+      Label: option.Label,
+      Color: { color: option.Color },
+      Id: index + 1,
+    }));
 
-		// Id Generator for Array
-		let i = 0;
-		this.dropdownOptions = this.allOptions.map((option: ComponentFramework.PropertyHelper.OptionMetadata, i: any) => ({ Value: option.Value, Label: option.Label, Color: { color: option.Color }, Id: i + 1 }))
-		this.defaultValue = context.parameters.OptionSetField.attributes?.DefaultValue;
-		this.container = container;
+    this.container = container;
+    this.notifyOutputChanged = notifyOutputChanged;
+    this.renderControl(context);
+  }
 
-		this.notifyOutputChanged = notifyOutputChanged;
+  private renderControl(context: ComponentFramework.Context<IInputs>): void {
+    const raw = context.parameters.OptionSetField.raw;
+    this.selectedOptionValue = raw != null ? raw : null;
 
-		this.renderControl(context);
-	}
+    const optionsForSteps = this.dropdownOptions.filter((o) => o.Value !== -1);
 
+    const params = {
+      options: optionsForSteps,
+      selectedValue: this.selectedOptionValue,
+      onChange: (newValue: number | null) => {
+        this.selectedOptionValue = newValue;
+        this.notifyOutputChanged();
+      },
+      isDisabled: context.mode.isControlDisabled,
+      defaultValue: context.parameters.OptionSetField.attributes?.DefaultValue,
+    };
 
-	private renderControl(context: ComponentFramework.Context<IInputs>): void {
-		this.isDisabled = context.mode.isControlDisabled;
-		let currentValueObj = this.dropdownOptions.filter(element => element.Value == context.parameters.OptionSetField.raw)
-		currentValueObj.length == 0 ? this.currentValue = 0 : this.currentValue = currentValueObj[0].Id;
-		
+    ReactDOM.render(
+      React.createElement(ProgressBarWithStages, { params }),
+      this.container
+    );
+  }
 
-		let params = {
-			options: this.dropdownOptions ?? DEFAULT_OPTIONS,
-			selectedKey: this.currentValue,
-			onChange: (newValue: number | null) => {
-				this.currentValue = newValue;
+  public updateView(context: ComponentFramework.Context<IInputs>): void {
+    this.renderControl(context);
+  }
 
-				this.notifyOutputChanged();
-			},
-			isDisabled: this.isDisabled,
-			defaultValue: this.defaultValue
-		};
-		//	console.log();		
-		ReactDOM.render(React.createElement(ProgressBarWithStages, { params }),
-			this.container);
+  public getOutputs(): IOutputs {
+    return {
+      OptionSetField:
+        this.selectedOptionValue == null ? undefined : this.selectedOptionValue,
+    };
+  }
 
-	}
-
-	/**
-	 * Called when any value in the property bag has changed. This includes field values, data-sets, global values such as container height and width, offline status, control metadata values such as label, visible, etc.
-	 * @param context The entire property bag available to control via Context Object; It contains values as set up by the customizer mapped to names defined in the manifest, as well as utility functions
-	 */
-	public updateView(context: ComponentFramework.Context<IInputs>): void {
-
-		this.renderControl(context);
-		// Add code to update control view
-	}
-
-	/** 
-	 * It is called by the framework prior to a control receiving new data. 
-	 * @returns an object based on nomenclature defined in manifest, expecting object[s] for property marked as “bound” or “output”
-	 */
-	public getOutputs(): IOutputs {
-		return {
-			OptionSetField: this.currentValue == null ? undefined : this.currentValue
-		};
-	}
-
-	/** 
-	 * Called when the control is to be removed from the DOM tree. Controls should use this call for cleanup.
-	 * i.e. cancelling any pending remote calls, removing listeners, etc.
-	 */
-	public destroy(): void {
-		// Add code to cleanup control if necessary
-		ReactDOM.unmountComponentAtNode(this.container);
-	}
-
-
+  public destroy(): void {
+    ReactDOM.unmountComponentAtNode(this.container);
+  }
 }
