@@ -32,14 +32,7 @@ const ProgressBarWithStages: React.FC<ProgressBarWithStagesProps> = ({ params })
   );
 
   return (
-    <div
-      style={{
-        marginTop: 4,
-        marginLeft: 68,
-        marginRight: 68,
-        marginBottom: 43,
-      }}
-    >
+    <div className="progress-steps-wrapper">
       <ReactMinimalProgressSteps
         data={params.options}
         selectedValue={selectedValue}

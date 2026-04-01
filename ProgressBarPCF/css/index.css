@@ -4,6 +4,11 @@
   --progress-line-fill-active: rgb(15, 108, 189);
 }
 
+/* Äußerer Wrapper (ersetzt Inline-Margins) */
+.progress-steps-wrapper {
+  padding: 4px 12px 10px;
+}
+
 /* Wrapper für die gesamte Progress-Steps-Komponente */
 .progress-steps {
   width: auto;
@@ -15,7 +20,7 @@
   display: flex;
   justify-content: space-between;
   position: relative;
-  margin-bottom: 30px;
+  margin-bottom: 18px;
   max-width: 100%;
   width: 100%;
 }
@@ -54,7 +59,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 6px solid var(--progress-line-empty);
+  border: 3px solid var(--progress-line-empty);
   cursor: pointer;
   transition: 0.4s ease;
 }
@@ -69,18 +74,19 @@
 
 /* Label unter dem Schritt */
 .progress-steps__label {
-  display: grid;
-  grid-gap: 10px;
-  grid-auto-rows: minmax(10px, auto);
-  padding: 5px;
-  margin-top: 25px;
-  font-size: 10px;
+  padding: 2px 2px 0;
+  margin-top: 18px;
+  font-size: 9px;
+  line-height: 1.1;
   position: absolute;
   top: 0;
-  left: unset;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
   color: black;
-  width: 150px;
+  width: 110px;
+  max-width: 110px;
+  word-break: break-word;
 }
 
 /* Vor/Zurück-Buttons (aktuell ausgeblendet) */

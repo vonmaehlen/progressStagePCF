@@ -3,6 +3,7 @@
 	<control namespace="Molyom.PCFControls" constructor="ProgressBarPCF" version="0.0.03" display-name-key="Molyom.PCFControls.ProgressBarPCF" description-key="ProgressBarPCF description" control-type="standard">
 		<!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
 		<property name="OptionSetField" display-name-key="OptionSetFieldDisplayName" description-key="Option Set Field to Progress Bar " of-type="OptionSet" usage="bound" required="true" />
+		<property name="ShowDefaultValue" display-name-key="ShowDefaultValueDisplayName" description-key="Wenn aktiviert, wird der Standardwert des Feldes angezeigt, solange noch kein Wert gesetzt ist." of-type="TwoOptions" usage="input" default-value="true" />
 		<!--
 		Property node's of-type attribute can be of-type-group attribute.
 		Example:

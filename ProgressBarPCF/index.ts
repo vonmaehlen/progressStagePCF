@@ -55,11 +55,18 @@ export class ProgressBarPCF implements ComponentFramework.StandardControl<IInput
     const raw = context.parameters.OptionSetField.raw;
     this.selectedOptionValue = raw != null ? raw : null;
 
+    const showDefaultValue = context.parameters.ShowDefaultValue?.raw ?? true;
+    const defaultValue = context.parameters.OptionSetField.attributes?.DefaultValue;
+    const displayValue =
+      showDefaultValue && this.selectedOptionValue == null && defaultValue != null
+        ? defaultValue
+        : this.selectedOptionValue;
+
     const optionsForSteps = this.dropdownOptions.filter((o) => o.Value !== -1);
 
     const params = {
       options: optionsForSteps,
-      selectedValue: this.selectedOptionValue,
+      selectedValue: displayValue,
       onChange: (newValue: number | null) => {
         this.selectedOptionValue = newValue;
         this.notifyOutputChanged();
