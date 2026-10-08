@@ -16,8 +16,16 @@ const DEFAULT_OPTIONS: ComponentFramework.PropertyHelper.OptionMetadata[] = [
 export class ProgressBarPCF implements ComponentFramework.StandardControl<IInputs, IOutputs> {
   private dropdownOptions: ProgressStepOption[] = [];
   private selectedOptionValue: number | null = null;
+  private optionsForSteps: ProgressStepOption[] = [];
   private container: HTMLDivElement;
   private notifyOutputChanged: () => void;
+  // Stable callback, created once (avoids new closures/props on every updateView).
+  private readonly handleChange = (newValue: number | null): void => {
+    this.selectedOptionValue = newValue;
+    this.notifyOutputChanged();
+  };
+  // Inputs of the last ReactDOM.render call; updateView skips rendering when unchanged.
+  private lastRendered: { displayValue: number | null; isDisabled: boolean; defaultValue: number | undefined } | null = null;
 
   constructor() {
     // PCF StandardControl
@@ -46,6 +54,9 @@ export class ProgressBarPCF implements ComponentFramework.StandardControl<IInput
       Id: index + 1,
     }));
 
+    // Option metadata does not change during the control's lifetime: compute once.
+    this.optionsForSteps = this.dropdownOptions.filter((o) => o.Value !== -1);
+
     this.container = container;
     this.notifyOutputChanged = notifyOutputChanged;
     this.renderControl(context);
@@ -62,17 +73,28 @@ export class ProgressBarPCF implements ComponentFramework.StandardControl<IInput
         ? defaultValue
         : this.selectedOptionValue;
 
-    const optionsForSteps = this.dropdownOptions.filter((o) => o.Value !== -1);
+    const isDisabled = context.mode.isControlDisabled;
+
+    // updateView fires for every property-bag refresh (form load, save, refresh,
+    // other field changes). If nothing this control renders has changed, skip the
+    // React render entirely; the result would be identical.
+    const last = this.lastRendered;
+    if (
+      last !== null &&
+      last.displayValue === displayValue &&
+      last.isDisabled === isDisabled &&
+      last.defaultValue === defaultValue
+    ) {
+      return;
+    }
+    this.lastRendered = { displayValue, isDisabled, defaultValue };
 
     const params = {
-      options: optionsForSteps,
+      options: this.optionsForSteps,
       selectedValue: displayValue,
-      onChange: (newValue: number | null) => {
-        this.selectedOptionValue = newValue;
-        this.notifyOutputChanged();
-      },
-      isDisabled: context.mode.isControlDisabled,
-      defaultValue: context.parameters.OptionSetField.attributes?.DefaultValue,
+      onChange: this.handleChange,
+      isDisabled,
+      defaultValue,
     };
 
     ReactDOM.render(
@@ -93,6 +115,7 @@ export class ProgressBarPCF implements ComponentFramework.StandardControl<IInput
   }
 
   public destroy(): void {
+    this.lastRendered = null;
     ReactDOM.unmountComponentAtNode(this.container);
   }
 }

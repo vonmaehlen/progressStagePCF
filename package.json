@@ -4,6 +4,7 @@
   "description": "Project containing your PowerApps Component Framework (PCF) control.",
   "scripts": {
     "build": "node --openssl-legacy-provider node_modules/pcf-scripts/bin/pcf-scripts.js build",
+    "build:prod": "node --openssl-legacy-provider node_modules/pcf-scripts/bin/pcf-scripts.js build --buildMode production",
     "clean": "pcf-scripts clean",
     "rebuild": "pcf-scripts rebuild",
     "start": "pcf-scripts start"

@@ -11,6 +11,8 @@
     <Name>progressStagePCF</Name>
     <ProjectGuid>7fdca6f6-fda5-4e25-9423-c95528753179</ProjectGuid>
     <OutputPath>$(MSBuildThisFileDirectory)out\controls</OutputPath>
+    <!-- Production bundle (minified React, no dev checks) also for `pac pcf push` / msbuild -->
+    <PcfBuildMode>production</PcfBuildMode>
   </PropertyGroup>
 
   <PropertyGroup>
