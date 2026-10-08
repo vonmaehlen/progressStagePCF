@@ -56,7 +56,7 @@ const ReactMinimalProgressSteps: React.FC<ReactMinimalProgressStepsProps> = ({
       <div className="progress-steps__track">
         <div
           className="progress-steps__fill"
-          style={{ width: `${progressWidthPercent}%` }}
+          style={{ transform: `translateY(-50%) scaleX(${progressWidthPercent / 100})` }}
         />
         {options.map((item) => {
           const itemIndex = options.findIndex((o) => o.Value === item.Value);
@@ -70,17 +70,18 @@ const ReactMinimalProgressSteps: React.FC<ReactMinimalProgressStepsProps> = ({
             .filter(Boolean)
             .join(' ');
 
+          const stepColor = item.Color?.color || '#0078d4';
+          const stepStyle: React.CSSProperties = isActive
+            ? { backgroundColor: stepColor, borderColor: stepColor }
+            : isCurrent
+              ? { borderColor: stepColor, boxShadow: `0 0 0 3px ${stepColor}33` }
+              : {};
+
           return (
             <div
               key={item.Value}
               className={stepClass}
-              style={{
-                backgroundColor: item.Color?.color || '#fff',
-                width: '15px',
-                height: '15px',
-                marginTop: 0,
-                position: 'relative',
-              }}
+              style={stepStyle}
               onClick={() => handleCircleClick(item)}
               role="button"
               tabIndex={0}
@@ -92,28 +93,16 @@ const ReactMinimalProgressSteps: React.FC<ReactMinimalProgressStepsProps> = ({
               }}
               aria-label={item.Label}
             >
+              {isActive && (
+                <svg className="progress-steps__check" viewBox="0 0 12 12" fill="none">
+                  <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
               <div className="progress-steps__label">{item.Label}</div>
             </div>
           );
         })}
       </div>
-
-      <button
-        type="button"
-        className="progress-steps__btn"
-        disabled={currentIndex === 0}
-        onClick={handlePrev}
-      >
-        {prevButtonText}
-      </button>
-      <button
-        type="button"
-        className="progress-steps__btn"
-        disabled={currentIndex === options.length - 1}
-        onClick={handleNext}
-      >
-        {nextButtonText}
-      </button>
     </div>
   );
 };

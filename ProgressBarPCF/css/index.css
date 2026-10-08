@@ -1,116 +1,131 @@
 :root {
-  --progress-line-fill: rgb(15, 108, 189);
-  --progress-line-empty: #f0f0f0;
-  --progress-line-fill-active: rgb(15, 108, 189);
+  --progress-accent: #0078d4;
+  --progress-accent-light: #deecf9;
+  --progress-gray: #e1e1e1;
+  --progress-gray-dark: #a0a0a0;
+  --progress-text: #323130;
+  --progress-text-muted: #605e5c;
 }
 
-/* Äußerer Wrapper (ersetzt Inline-Margins) */
+/* Outer wrapper */
 .progress-steps-wrapper {
-  padding: 4px 12px 10px;
+  padding: 6px 12px 16px;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Wrapper für die gesamte Progress-Steps-Komponente */
+/* Main container */
 .progress-steps {
   width: auto;
   display: flex;
 }
 
-/* Track (Hintergrundlinie + Schritte) */
+/* Track */
 .progress-steps__track {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   position: relative;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
   max-width: 100%;
   width: 100%;
+  padding: 0 55px;
+  box-sizing: border-box;
 }
 
+/* Background line (between circle centers) */
 .progress-steps__track::before {
   content: '';
-  background-color: var(--progress-line-empty);
+  background-color: var(--progress-gray);
   position: absolute;
   top: 50%;
-  left: 0;
+  left: 63px;
+  right: 63px;
   transform: translateY(-50%);
-  height: 6px;
-  width: 100%;
+  height: 2px;
+  border-radius: 1px;
 }
 
-/* Fortschritts-Füllung (animierte Linie) */
+/* Progress fill line (between circle centers) */
 .progress-steps__fill {
-  background-color: var(--progress-line-fill);
+  background-color: var(--progress-accent);
   position: absolute;
   top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  height: 4px;
-  width: 0%;
+  left: 63px;
+  right: 63px;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: left center;
+  height: 2px;
   z-index: 0;
-  transition: 0.4s ease;
+  border-radius: 1px;
+  transition: transform 0.4s ease;
 }
 
-/* Einzelner Schritt (Kreis) */
+/* Step circle */
 .progress-steps__step {
   background-color: #fff;
-  color: #999;
+  color: var(--progress-gray-dark);
   border-radius: 50%;
-  height: 50px;
-  width: 50px;
+  height: 12px;
+  width: 12px;
+  min-width: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid var(--progress-line-empty);
+  border: 2px solid var(--progress-gray);
   cursor: pointer;
-  transition: 0.4s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
+
+/* Completed step */
 .progress-steps__step--active {
-  border-color: var(--progress-line-fill);
+  background-color: var(--progress-accent);
+  border-color: var(--progress-accent);
+  color: #fff;
 }
 
+/* Current step */
 .progress-steps__step--current {
-  border-color: var(--progress-line-fill-active);
+  border-color: var(--progress-accent);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px var(--progress-accent-light);
 }
 
-/* Label unter dem Schritt */
+/* Checkmark SVG */
+.progress-steps__check {
+  width: 10px;
+  height: 10px;
+}
+
+/* Label below step */
 .progress-steps__label {
-  padding: 2px 2px 0;
-  margin-top: 18px;
-  font-size: 9px;
-  line-height: 1.1;
   position: absolute;
-  top: 0;
+  top: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  color: black;
+  color: var(--progress-text-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.3;
   width: 110px;
   max-width: 110px;
   word-break: break-word;
+  white-space: normal;
 }
 
-/* Vor/Zurück-Buttons (aktuell ausgeblendet) */
+.progress-steps__step--current .progress-steps__label {
+  color: var(--progress-text);
+  font-weight: 600;
+}
+
+.progress-steps__step--active .progress-steps__label {
+  color: var(--progress-text);
+}
+
+/* Buttons (hidden) */
 .progress-steps__btn {
-  background-color: var(--progress-line-fill);
-  color: #fff;
-  border: 0;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: inherit;
-  padding: 8px 30px;
-  font-size: 14px;
   display: none;
-}
-
-.progress-steps__btn:active {
-  transform: scale(0.98);
-}
-
-.progress-steps__btn:focus {
-  outline: 0;
-}
-
-.progress-steps__btn:disabled {
-  background-color: var(--progress-line-empty);
-  cursor: not-allowed;
 }
